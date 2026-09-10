@@ -477,10 +477,18 @@ export function viewSettings(s) {
         <span class="eyebrow dim" style="margin:0">Your fast</span>
         <span class="mono tabnum" style="color:var(--brass-lit)">≈ ${s.win.durationDays.toFixed(1)} days</span>
       </div>
-      <p class="muted" style="margin:10px 0 0">One day either side is the four-day window as taught, at about 4.2 days.
-      Dropping the <b>lead</b> day gives roughly 3.2 — a gentler fast that still ends inside the refeeding phase, which is
-      the safer way to shorten it. Dropping the <b>trailing</b> day shortens it by the same amount but pushes refeeding
-      outside the window, so you have to remember it yourself. Widening either makes a longer fast: read the safety notes again first.</p>
+      ${p.leadDays === 1 && p.trailDays === 1
+        ? `<p class="note good" style="margin-top:12px"><b>This is the taught length.</b> One day either side of the Moon's
+           passage, about 4.2 days total, is specifically what the tradition holds is needed for the activation work —
+           not an arbitrary default.</p>`
+        : `<p class="note warn" style="margin-top:12px"><b>You have left the taught length.</b> One day either side (≈4.2
+           days) is what the tradition specifies for the activation work itself. What you have set here — ≈${s.win.durationDays.toFixed(1)}
+           days — is a personal fasting modification timed to the same lunar window, not the activation protocol. Kundala
+           will still run it correctly, but do not expect the same thing from it.</p>`}
+      <p class="muted" style="margin:10px 0 0">Dropping the <b>lead</b> day is the safer way to shorten it — refeeding
+      (Return) still falls inside the window. Dropping the <b>trailing</b> day pushes refeeding outside the window
+      entirely, so you have to remember it yourself. Widening either makes a longer fast: read the safety notes again
+      before you do.</p>
     </div>
 
     ${s.owns.premium ? `<div class="card">
