@@ -34,9 +34,34 @@ test('lead and trail days are configurable', () => {
   assert.equal(w.end - w.egress, 0);
 });
 
+test('a three-day window collapses exactly one phase and stays coherent', () => {
+  for (const [lead, trail, collapsed] of [[0, 1, 'taper'], [1, 0, 'return']]) {
+    const w = computeWindow(4, FROM, { leadDays: lead, trailDays: trail });
+    assert.ok(w.durationDays > 2.9 && w.durationDays < 3.6,
+      `lead=${lead} trail=${trail} gave ${w.durationDays.toFixed(2)} days`);
+    assert.equal(w.phases.length, 4, 'all four phases must remain addressable by id');
+    assert.deepEqual(w.phases.filter((p) => p.skipped).map((p) => p.id), [collapsed]);
+  }
+});
+
+test('a collapsed phase never becomes the current phase, and never yields NaN', () => {
+  for (const [lead, trail] of [[1, 1], [0, 1], [1, 0], [0, 0]]) {
+    const w = computeWindow(4, FROM, { leadDays: lead, trailDays: trail });
+    // Walk the window hourly; every reading must be a real, non-collapsed phase.
+    for (let t = w.start.getTime(); t <= w.end.getTime(); t += 3600000) {
+      const st = windowStatus(w, new Date(t));
+      assert.equal(st.state, 'active');
+      assert.equal(st.phase.skipped, false, `collapsed phase reported at ${new Date(t).toISOString()}`);
+      assert.ok(Number.isFinite(st.phaseProgress), `phaseProgress was ${st.phaseProgress}`);
+      assert.ok(Number.isFinite(st.progress));
+    }
+  }
+});
+
 test('the four phases tile the window without gaps or overlaps', () => {
   const w = computeWindow(6, FROM);
   assert.equal(w.phases.length, 4);
+  assert.ok(w.phases.every((p) => p.skipped === false));
   assert.equal(w.phases[0].start.getTime(), w.start.getTime());
   assert.equal(w.phases[3].end.getTime(), w.end.getTime());
   for (let i = 1; i < 4; i++) {

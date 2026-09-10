@@ -138,6 +138,7 @@ a { color: var(--brass-lit); }
 .phase-pip .n { font-family: var(--mono); font-size: .62rem; color: var(--bone-faint); letter-spacing: .16em; }
 .phase-pip .t { font-family: var(--display); font-size: .84rem; color: var(--bone-dim); }
 .phase-pip[data-state="done"] { opacity: .55; }
+.phase-pip[data-state="skipped"] { opacity: .4; border-style: dashed; }
 .phase-pip[data-state="now"] { border-color: var(--brass); background: linear-gradient(180deg, rgba(201,162,39,.16), rgba(201,162,39,.03)); }
 .phase-pip[data-state="now"] .t { color: var(--brass-lit); }
 

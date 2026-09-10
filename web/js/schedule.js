@@ -81,12 +81,16 @@ export function computeWindow(sunSign, from = new Date(), opts = {}) {
   const start = new Date(ingress.getTime() - leadDays * DAY);
   const mid = new Date((ingress.getTime() + egress.getTime()) / 2);
 
+  // A zero-day lead or trail collapses a phase to nothing — that is how a
+  // three-day window is made. All four stay in the list so every view can still
+  // find one by id; a collapsed phase is marked `skipped`, meaning its guidance
+  // still applies, it just falls outside the window rather than inside it.
   const phases = [
     { ...PHASES[0], start, end: ingress },
     { ...PHASES[1], start: ingress, end: mid },
     { ...PHASES[2], start: mid, end: egress },
     { ...PHASES[3], start: egress, end }
-  ];
+  ].map((p) => ({ ...p, skipped: p.end.getTime() <= p.start.getTime() }));
 
   return {
     sunSign,
@@ -136,13 +140,15 @@ export function windowStatus(win, now = new Date()) {
   if (t > win.end.getTime()) {
     return { state: 'complete', msUntil: 0, phase: null, progress: 1 };
   }
-  const phase = win.phases.find((p) => t >= p.start.getTime() && t < p.end.getTime()) || win.phases[3];
+  const live = win.phases.filter((p) => !p.skipped);
+  const phase = live.find((p) => t >= p.start.getTime() && t < p.end.getTime()) || live[live.length - 1];
+  const span = phase.end.getTime() - phase.start.getTime();
   return {
     state: 'active',
     msUntil: win.end.getTime() - t,
     phase,
     progress: (t - win.start.getTime()) / (win.end.getTime() - win.start.getTime()),
-    phaseProgress: (t - phase.start.getTime()) / (phase.end.getTime() - phase.start.getTime())
+    phaseProgress: span > 0 ? (t - phase.start.getTime()) / span : 1
   };
 }
 

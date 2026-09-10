@@ -135,8 +135,9 @@ export function viewWindow(s) {
         : 'window complete';
 
   const pips = win.phases.map((p) => {
-    const state = status.state === 'active' && status.phase?.id === p.id ? 'now'
-      : Date.now() > p.end.getTime() ? 'done' : 'next';
+    const state = p.skipped ? 'skipped'
+      : status.state === 'active' && status.phase?.id === p.id ? 'now'
+        : Date.now() > p.end.getTime() ? 'done' : 'next';
     return `<button class="phase-pip" data-state="${state}" data-action="go:phase" data-phase="${p.id}">
       <span class="n">0${p.ordinal}</span><span class="t">${esc(p.name)}</span></button>`;
   }).join('');
@@ -227,7 +228,7 @@ export function viewProtocol(s) {
   // rows on a narrow phone and read as a broken list.
   const tabs = PHASES.map(
     (p) => `<button class="phase-pip" data-action="go:phase" data-phase="${p.id}"
-      data-state="${active === p.id ? 'now' : 'next'}">
+      data-state="${active === p.id ? 'now' : (s.win.phases.find((w) => w.id === p.id)?.skipped ? 'skipped' : 'next')}">
       <span class="n">0${p.ordinal}</span><span class="t">${esc(p.name)}</span></button>`
   ).join('');
 
@@ -246,11 +247,15 @@ export function viewProtocol(s) {
     <div class="card brass">
       <p class="eyebrow">Phase 0${phase.ordinal} · ${esc(phase.subtitle)}</p>
       <p class="lede" style="margin-bottom:.6em">${esc(c.focus)}</p>
-      <dl class="meta">
+      ${phase.skipped ? `<p class="note warn"><b>Outside your window.</b> You have shortened your fast, so this phase is not timed — but ${
+        active === 'return'
+          ? 'you still have to break the fast, and this is how. Refeeding is the part that can actually hurt you; do not skip it because the window closed.'
+          : 'the guidance still applies. Do it the day before your window opens.'}</p>`
+        : `<dl class="meta">
         <dt>From</dt><dd>${esc(stamp(phase.start))}</dd>
         <dt>Until</dt><dd>${esc(stamp(phase.end))}</dd>
         <dt>Level</dt><dd>${esc(level.name)} — ${esc(level.blurb)}</dd>
-      </dl>
+      </dl>`}
     </div>
 
     <div class="card">
@@ -468,7 +473,14 @@ export function viewSettings(s) {
           <button data-action="set:trail" data-delta="1" aria-label="more trailing days">+</button>
         </div>
       </div>
-      <p class="muted" style="margin:10px 0 0">One day either side is the four-day window as taught. Widening it makes a longer fast — read the safety notes again before you do.</p>
+      <div class="row between" style="padding:10px 0 0;border-top:1px solid var(--line-soft);margin-top:6px">
+        <span class="eyebrow dim" style="margin:0">Your fast</span>
+        <span class="mono tabnum" style="color:var(--brass-lit)">≈ ${s.win.durationDays.toFixed(1)} days</span>
+      </div>
+      <p class="muted" style="margin:10px 0 0">One day either side is the four-day window as taught, at about 4.2 days.
+      Dropping the <b>lead</b> day gives roughly 3.2 — a gentler fast that still ends inside the refeeding phase, which is
+      the safer way to shorten it. Dropping the <b>trailing</b> day shortens it by the same amount but pushes refeeding
+      outside the window, so you have to remember it yourself. Widening either makes a longer fast: read the safety notes again first.</p>
     </div>
 
     ${s.owns.premium ? `<div class="card">
