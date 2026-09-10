@@ -1,0 +1,23 @@
+{
+  "appId": "app.kundala",
+  "appName": "Kundala",
+  "webDir": "web",
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#08070c"
+  },
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_kundala",
+      "iconColor": "#c9a227"
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#08070c",
+      "overlaysWebView": true
+    }
+  }
+}
