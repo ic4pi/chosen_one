@@ -1,0 +1,32 @@
+{
+  "name": "kundala",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Kundala — the four-day moon fast. A personal kundalini activation fast, timed to the Moon's passage through your Sun sign. Calculated entirely on device.",
+  "license": "MIT",
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "dev": "node tools/serve.mjs",
+    "test": "node --test tests/*.test.js",
+    "icons": "python3 tools/make-icons.py",
+    "codes": "node tools/kundala-codes.mjs",
+    "android:add": "cap add android",
+    "android:sync": "cap sync android",
+    "android:open": "cap open android",
+    "android:build": "cap sync android && cd android && ./gradlew bundleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.1",
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/core": "^8.5.1",
+    "@capacitor/local-notifications": "^8.3.1",
+    "@capacitor/status-bar": "^8.0.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

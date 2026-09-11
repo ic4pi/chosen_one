@@ -1,0 +1,10 @@
+node_modules/
+# Capacitor generated projects, not the icon sources under web/icons/android/
+/android/
+/ios/
+.DS_Store
+*.log
+.env
+.idea/
+.vscode/
+dist/

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kundala — The Four-Day Moon Fast</title>
+<meta name="description" content="Kundala calculates your personal four-day kundalini activation fast from the real position of the Moon against your Sun. Works entirely offline.">
+<meta name="theme-color" content="#08070c">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kundala">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="stylesheet" href="./styles/app.css">
+</head>
+<body>
+  <noscript>
+    <div style="padding:32px;max-width:520px;margin:0 auto;font-family:system-ui;color:#ece7dc">
+      <h1 style="font-family:Georgia,serif">Kundala</h1>
+      <p>Kundala computes the position of the Moon on your device, which needs JavaScript.
+      Nothing is sent anywhere — the calculation simply happens here rather than on a server.</p>
+    </div>
+  </noscript>
+
+  <main id="app" role="main"></main>
+  <nav id="tabbar" class="tabbar" aria-label="Primary" hidden></nav>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module">
+    import { boot } from './js/app.js';
+    boot();
+  </script>
+</body>
+</html>
