@@ -67,6 +67,11 @@ and to Google Play through Capacitor, which wraps the same directory.
 
 - **Web / installable** — serve `web/` over HTTPS on any static host. It installs from the
   browser as a PWA and works offline from the first launch.
+- **Vercel** — the root `vercel.json` already points the deployment at `web/`, so leave the
+  project's **Root Directory** as the repository root and the **Framework Preset** as *Other*.
+  (If you'd rather set Root Directory to `web`, that works too — `web/vercel.json` carries the
+  same settings.) Getting a 404 on a fresh deploy almost always means Vercel is serving the
+  repository root, where there is no `index.html`.
 - **Google Play** — `npm run android:add && npm run android:open`. Full walkthrough,
   including signing and Play Billing, in [docs/ANDROID.md](docs/ANDROID.md).
 - **Store listing copy** — [docs/PLAY_LISTING.md](docs/PLAY_LISTING.md).
