@@ -78,8 +78,8 @@ fasting · moon phase · lunar calendar · kundalini · pranayama · astrology �
 | Asset | Size | Source |
 |---|---|---|
 | App icon | 512 × 512 PNG | `web/icons/playstore-512.png` |
-| Feature graphic | 1024 × 500 | To design — the coil mark on ink, wordmark right |
-| Phone screenshots | ≥ 2, 1080 × 1920+ | Window, Protocol, Practice, Unlock |
+| Feature graphic | 1024 × 500 | `web/icons/store/feature-graphic.png` |
+| Phone screenshots | ≥ 2, 1080 × 1920+ | Window, Protocol, Practice, Unlock — not made yet |
 
 For screenshots, run `npm start`, open the app in a phone-sized viewport, and capture the
 Window, Protocol (Depth), Practice and Unlock screens.
