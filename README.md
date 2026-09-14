@@ -103,6 +103,8 @@ tools/
   make-icons.py         draws the app mark from maths (stdlib only)
   kundala-codes.mjs     mints coupon codes
 tests/                  27 tests, node --test
+plugins/
+  capacitor-play-billing/  the Android in-app purchase, wired direct to Play Billing
 ```
 
 ### Accuracy

@@ -2,14 +2,16 @@
  * billing.js — one-time purchase adapter.
  *
  * Kundala ships no backend, so there is no receipt server to talk to. On
- * Android the app hands off to Google Play Billing through an optional
- * Capacitor plugin; Play itself is the source of truth and the purchase
- * restores from the user's Play account. Everywhere else the paid tier is
- * unlocked with a code.
+ * Android the app hands off to Google Play Billing through
+ * plugins/capacitor-play-billing — a small in-repo Capacitor plugin that
+ * talks straight to the Play Billing Library, nothing else. Play itself is
+ * the source of truth and the purchase restores from the user's Play
+ * account. Everywhere else (web/PWA) the paid tier is unlocked with a code.
  *
- * Wiring Play Billing is documented in docs/ANDROID.md. Until a plugin is
- * installed this adapter reports `unavailable` and the UI offers the code path,
- * which keeps the web build honest rather than showing a button that lies.
+ * The plugin only exists once `npm run android:add` generates the Android
+ * project (documented in docs/ANDROID.md). Until then this adapter reports
+ * `unavailable` and the UI offers the code path, which keeps the web build
+ * honest rather than showing a button that lies.
  */
 
 import { grant } from './entitlements.js';

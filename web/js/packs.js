@@ -28,7 +28,7 @@ export const PACKS = [
     marker: 'P',
     name: 'The Keeper',
     tagline: 'One-time purchase',
-    price: '$14.99',
+    price: '$0.99',
     unlock: 'purchase',
     summary: 'Kundala reaches out to you. A countdown ladder of device notifications before the window opens, and live phase alerts inside it that open straight to the practice you need.',
     features: [

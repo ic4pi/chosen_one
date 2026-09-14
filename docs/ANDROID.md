@@ -63,17 +63,37 @@ remove it with a tools:node override — the app makes no network calls.
 
 ## 4. In-app purchase (The Keeper)
 
-`web/js/billing.js` is an adapter, deliberately unwired. Kundala ships no backend, so Play
-itself is the source of truth and purchases restore from the user's Play account.
+`web/js/billing.js` is an adapter. On Android it talks to `plugins/capacitor-play-billing`
+— a small Capacitor plugin, built for this repo, that wraps the Google Play Billing
+Library directly. No third-party purchase service, no RevenueCat-style account, no
+network calls beyond the ones Play's own billing client makes. Kundala ships no backend,
+so Play itself is the source of truth and purchases restore from the user's Play account.
 
-1. Install a Capacitor billing plugin that exposes `purchase()` and `restorePurchases()`.
-2. In Play Console → **Monetise → In-app products**, create a one-time product with ID
-   `kundala.keeper.lifetime` (this ID is in `PRODUCT_IDS` in `billing.js`).
-3. Make sure the plugin registers as `Capacitor.Plugins.InAppPurchases` or
-   `Capacitor.Plugins.Purchases` — those are the two names the adapter looks for.
+It's already wired into `package.json` as a `file:` dependency and registers itself as
+`Capacitor.Plugins.Purchases`, which is exactly what `billing.js` looks for — nothing to
+install. `npm run android:add` (or `android:sync`) picks it up automatically; `cap sync`
+prints `capacitor-play-billing@1.0.0` in its plugin list when it has.
 
-Until a plugin is present, `billing.available()` is `false` and the UI says so plainly
-rather than showing a button that does nothing. The code path still works everywhere.
+1. In Play Console → **Monetise → In-app products**, create a one-time (managed) product
+   with ID `kundala.keeper.lifetime` (this ID is in `PRODUCT_IDS` in `billing.js`) and
+   price it at $0.99. Do the same for `kundala.deepcurrent.lifetime` later, when that
+   pack ships.
+2. Build and install a release or internal-testing build signed with the same key you'll
+   upload to Play — the Play Billing Library refuses to return real products for a debug
+   build unless the app is published (at least to an internal testing track) under that
+   exact `applicationId` and signed with a key Play recognises.
+3. Add your own Google account as a licence tester in Play Console → **Setup → License
+   testing** so you can buy the $0.99 product for real without being charged.
+
+The plugin's source is in `plugins/capacitor-play-billing/android/src/main/java/app/kundala/
+playbilling/PlayBillingPlugin.java` if you need to change product handling later (e.g. to
+add consumables). It was written and reviewed here but never compiled against a real
+Android SDK or exercised against a live Play Billing purchase flow — build it in Android
+Studio and buy the test product once before you rely on it.
+
+If no plugin were present, `billing.available()` would report `false` and the UI would say
+so plainly rather than showing a button that does nothing — that fallback path still exists
+and still runs on web/PWA, where there is no Play Billing at all.
 
 ## 5. Build and sign
 

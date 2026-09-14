@@ -1,0 +1,26 @@
+{
+  "name": "capacitor-play-billing",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal Capacitor plugin wrapping Google Play Billing Library directly. No backend, no third-party purchase service, no analytics SDK — the only party this talks to is Google Play itself.",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "capacitor": {
+    "android": {
+      "src": "android"
+    }
+  },
+  "files": [
+    "android",
+    "src"
+  ],
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "billing"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@capacitor/core": "^8.0.0"
+  }
+}
