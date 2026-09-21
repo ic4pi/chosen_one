@@ -76,14 +76,14 @@ prints `capacitor-play-billing@1.0.0` in its plugin list when it has.
 
 1. In Play Console → **Monetise → In-app products**, create a one-time (managed) product
    with ID `kundala.keeper.lifetime` (this ID is in `PRODUCT_IDS` in `billing.js`) and
-   price it at $0.99. Do the same for `kundala.deepcurrent.lifetime` later, when that
+   price it at $1.99. Do the same for `kundala.deepcurrent.lifetime` later, when that
    pack ships.
 2. Build and install a release or internal-testing build signed with the same key you'll
    upload to Play — the Play Billing Library refuses to return real products for a debug
    build unless the app is published (at least to an internal testing track) under that
    exact `applicationId` and signed with a key Play recognises.
 3. Add your own Google account as a licence tester in Play Console → **Setup → License
-   testing** so you can buy the $0.99 product for real without being charged.
+   testing** so you can buy the $1.99 product for real without being charged.
 
 The plugin's source is in `plugins/capacitor-play-billing/android/src/main/java/app/kundala/
 playbilling/PlayBillingPlugin.java` if you need to change product handling later (e.g. to

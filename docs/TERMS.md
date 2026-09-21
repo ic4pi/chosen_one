@@ -62,7 +62,7 @@ your violation of these Terms.
 
 ## 8. Purchases
 
-The Keeper ($0.99) is a one-time, non-subscription purchase made through Google Play.
+The Keeper ($1.99) is a one-time, non-subscription purchase made through Google Play.
 Refunds are handled entirely through Google Play's own refund policy and process — the
 developer has no separate refund mechanism and holds no payment data (see the Privacy
 Policy). Purchases restore automatically to the Google account that made them.
