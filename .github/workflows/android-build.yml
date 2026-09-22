@@ -7,6 +7,9 @@ name: Android — build signed release bundle
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -83,3 +86,15 @@ jobs:
           name: kundala-release-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
           retention-days: 14
+
+      # Workflow artifacts always come back as a zip, which some mobile
+      # unzip apps mangle. A GitHub Release asset downloads as the raw
+      # .aab with no extraction step, so it can't be corrupted in transit.
+      - name: Publish the .aab as a direct-download release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-build-${{ github.run_number }}
+          name: Kundala Android build #${{ github.run_number }}
+          body: Signed release bundle from workflow run ${{ github.run_id }}. Download app-release.aab below and upload it directly to Play Console — no unzipping needed.
+          files: android/app/build/outputs/bundle/release/app-release.aab
+          prerelease: true
