@@ -7,44 +7,53 @@ same files the web version serves.
 
 ```bash
 npm install
-npm run android:add      # creates android/ — gitignored, regenerate any time
-npm run android:sync     # copies web/ into the project
-npm run android:open     # opens Android Studio
+npm run icons             # renders web/icons/android/ (needed once, before android:add)
+npm run android:add       # creates android/ — gitignored, regenerate any time
+npm run android:sync      # copies web/ into the project
+npm run android:open      # opens Android Studio
 ```
+
+`android:add` and `android:sync` both run `tools/android-postsync.mjs` afterward, which
+copies the notification icons into their density buckets and strips the `INTERNET`
+permission (see below) automatically — this repo's `android/` is gitignored and
+regenerated from scratch each time, so those two fixes are scripted instead of manual
+so they can't be forgotten.
 
 `android/` is deliberately not committed. It is generated output; `capacitor.config.json`
 is the source of truth.
 
-## 2. Drop in the notification icon
+Verified end-to-end against this repo: `npm install && npm run android:add` completes
+with no errors and the postsync script's output confirms `5/5` icon densities copied and
+the `INTERNET` permission removed. Building the signed bundle (`android:build`) still
+needs the Android SDK from Android Studio — that step wasn't reachable from this
+environment's sandboxed network, but nothing in the generation step is a blocker.
+
+## 2. The notification icon
 
 Android status-bar icons must be a white silhouette on transparency — the system tints
-them. `npm run icons` renders them into `web/icons/android/`. Copy each into its density
-bucket, renamed to `ic_stat_kundala.png`:
-
-```bash
-for b in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
-  mkdir -p android/app/src/main/res/drawable-$b
-  cp web/icons/android/ic_stat_kundala-$b.png \
-     android/app/src/main/res/drawable-$b/ic_stat_kundala.png
-done
-```
+them. `npm run icons` renders them into `web/icons/android/`; `android-postsync.mjs`
+copies each into `android/app/src/main/res/drawable-<density>/ic_stat_kundala.png`
+automatically on `android:add`/`android:sync`. The name must match
+`plugins.LocalNotifications.smallIcon` in `capacitor.config.json`.
 
 Without this, Capacitor falls back to the launcher icon and Android renders it as a white
-square. The name must match `plugins.LocalNotifications.smallIcon` in `capacitor.config.json`.
+square.
 
 For the launcher icon, use `web/icons/maskable-512.png` in Android Studio's
 **Image Asset** tool (Adaptive icon → Foreground layer), with `#08070c` as the background.
+This one step has no CLI equivalent — Android Studio only.
 
 ## 3. Permissions
 
-Capacitor's local-notifications plugin adds what it needs, but confirm these are in
-`android/app/src/main/AndroidManifest.xml`:
+Confirmed by inspecting the plugins' own manifests in `node_modules/@capacitor/*` — the
+local-notifications plugin merges these into `android/app/src/main/AndroidManifest.xml`
+automatically, no action needed:
 
 ```xml
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-<uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+<uses-permission android:name="android.permission.WAKE_LOCK"/>
 ```
 
 `POST_NOTIFICATIONS` is requested at runtime on Android 13+; the app already does this the
@@ -53,13 +62,18 @@ first time notifications are switched on.
 `RECEIVE_BOOT_COMPLETED` matters more than it looks: a countdown can be armed fourteen days
 out, and without it every scheduled alarm is lost when the phone reboots.
 
-The exact-alarm permissions are what let a notification fire at the actual ingress instant
-rather than whenever Doze next wakes. If Play pushes back on `USE_EXACT_ALARM` for a
-non-alarm-clock app, drop both and accept the drift — the schedule still works, it just
+`SCHEDULE_EXACT_ALARM` is what lets a notification fire at the actual ingress instant
+rather than whenever Doze next wakes. `USE_EXACT_ALARM` is *not* added by any plugin; add
+it by hand in `android/app/src/main/AndroidManifest.xml` only if `SCHEDULE_EXACT_ALARM`
+alone proves insufficient during testing. If Play pushes back on either for a
+non-alarm-clock app, drop them and accept the drift — the schedule still works, it just
 becomes approximate.
 
-**Kundala requests no `INTERNET` permission and needs none.** If Capacitor adds it, you can
-remove it with a tools:node override — the app makes no network calls.
+**Kundala requests no `INTERNET` permission and needs none.** The stock Capacitor Android
+template adds it unconditionally; `android-postsync.mjs` deletes that line from
+`AndroidManifest.xml` on every `android:add`/`android:sync` (confirmed: none of the
+installed plugins' own manifests declare `INTERNET`, so a plain delete is sufficient — no
+`tools:node="remove"` override needed).
 
 ## 4. In-app purchase (The Keeper)
 
